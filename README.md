@@ -1,4 +1,4 @@
-# CPE401 Multi-Agent — Backend
+Backend
 
 Backend foundation ของฟีเจอร์ **Agent Chat: Sprint 1** สำหรับโปรเจกต์
 Multi-Agent Financial Data and Investment Intelligence Platform
