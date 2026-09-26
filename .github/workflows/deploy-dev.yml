@@ -1,0 +1,50 @@
+name: Deploy Dev to CloudStack K8s
+
+on:
+  push:
+    branches: [frontend]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Lowercase repo name for Docker tag
+        id: repo_name
+        run: echo "IMAGE_TAG=ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]'):dev" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Docker image (Load to local VM)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          push: false
+          tags: ${{ env.IMAGE_TAG }}
+          provenance: false
+          build-args: |
+            VITE_SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}
+            VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.DEV_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Import Image directly to K3s
+        run: |
+          # โอน Image จาก Docker เข้า K3s อัตโนมัติ
+          docker save ${{ env.IMAGE_TAG }} | sudo k3s ctr images import -
+
+      - name: Deploy to K3s Cluster
+        run: |
+          export KUBECONFIG=~/.kube/config
+          kubectl create namespace development --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/ingress.yaml
+          kubectl rollout restart deployment/dev-frontend -n development
+          kubectl rollout status deployment/dev-frontend -n development --timeout=120s

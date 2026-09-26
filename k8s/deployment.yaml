@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-frontend
+  namespace: development
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dev-frontend
+  template:
+    metadata:
+      labels:
+        app: dev-frontend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-auth
+      containers:
+        - name: web
+          image: ghcr.io/goosefin-ai/cpe401:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
