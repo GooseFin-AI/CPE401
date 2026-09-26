@@ -7,7 +7,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: self-hosted
-    environment: development
     permissions:
       contents: read
       packages: write
