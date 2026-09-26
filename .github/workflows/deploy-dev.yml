@@ -22,23 +22,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
+      - name: Build Docker image (Load to local VM)
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          load: true
+          push: false
           tags: ${{ env.IMAGE_TAG }}
           provenance: false
           build-args: |
             VITE_SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}
             VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.DEV_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Import Image directly to K3s
+        run: |
+          # โอน Image จาก Docker เข้า K3s อัตโนมัติ
+          docker save ${{ env.IMAGE_TAG }} | sudo k3s ctr images import -
 
       - name: Deploy to K3s Cluster
         run: |

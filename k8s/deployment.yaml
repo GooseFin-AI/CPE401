@@ -17,8 +17,8 @@ spec:
         - name: ghcr-auth
       containers:
         - name: web
-          image: ghcr.io/santipab-phupha/cpe401-multi-agent:dev
-          imagePullPolicy: Always
+          image: ghcr.io/goosefin-ai/cpe401:dev
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:
