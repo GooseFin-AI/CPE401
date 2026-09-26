@@ -33,7 +33,7 @@ jobs:
           tags: ${{ env.IMAGE_TAG }}
           build-args: |
             VITE_SUPABASE_URL=${{ secrets.DEV_SUPABASE_URL }}
-            VITE_SUPABASE_ANON_KEY=${{ secrets.DEV_SUPABASE_ANON_KEY }}
+            VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.DEV_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: Deploy to CloudStack Kubernetes
         uses: appleboy/ssh-action@v1.2.0
