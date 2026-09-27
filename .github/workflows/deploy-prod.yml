@@ -37,6 +37,9 @@ jobs:
             --environment=production \
             --token="${{ secrets.VERCEL_TOKEN }}"
 
+      - name: Expose Environment Variables to Vite
+        run: cp .vercel/.env.production.local .env.production
+
       - name: Build Project Artifacts
         run: |
           vercel build \
