@@ -36,7 +36,6 @@ jobs:
 
       - name: Import Image directly to K3s
         run: |
-          # โอน Image จาก Docker เข้า K3s อัตโนมัติ
           docker save ${{ env.IMAGE_TAG }} | sudo k3s ctr images import -
 
       - name: Deploy to K3s Cluster
