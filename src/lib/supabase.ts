@@ -5,11 +5,17 @@ const supabasePublishableKey =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 if (!supabaseUrl) {
-  throw new Error('Missing VITE_SUPABASE_URL')
+  throw new Error("Missing VITE_SUPABASE_URL");
 }
 
 if (!supabasePublishableKey) {
-  throw new Error('Missing VITE_SUPABASE_ANON_KEY')
+  throw new Error("Missing VITE_SUPABASE_PUBLISHABLE_KEY");
+}
+
+if (!/^https?:\/\//.test(supabaseUrl)) {
+  throw new Error(
+    `Invalid VITE_SUPABASE_URL: "${supabaseUrl}"`
+  );
 }
 
 export const supabase = createClient(
