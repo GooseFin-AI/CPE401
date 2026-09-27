@@ -37,8 +37,32 @@ jobs:
             --environment=production \
             --token="${{ secrets.VERCEL_TOKEN }}"
 
-      - name: Expose Environment Variables to Vite
-        run: cp .vercel/.env.production.local .env.production
+      - name: Debug Vercel Environment
+        run: |
+          echo "=== .vercel files ==="
+          find .vercel -maxdepth 2 -type f -print
+
+          echo ""
+          echo "=== Vercel environment variable names ==="
+
+          if [ -f .vercel/.env.production.local ]; then
+            grep '^VITE_' .vercel/.env.production.local \
+              | sed 's/=.*/=<REDACTED>/'
+          else
+            echo ".vercel/.env.production.local not found"
+          fi
+
+          echo ""
+          echo "=== Repository env files ==="
+          find . -maxdepth 2 \
+            \( -name ".env" \
+            -o -name ".env.local" \
+            -o -name ".env.production" \
+            -o -name ".env.production.local" \
+            -o -name ".env.development" \
+            -o -name ".env.development.local" \) \
+            -not -path "./node_modules/*" \
+            -print
 
       - name: Build Project Artifacts
         run: |
